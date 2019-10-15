@@ -1,0 +1,9 @@
+name: ai-teaching
+displayName: Zego AI 课堂
+description:
+redirectUrl:
+installers: [./ai-teaching.apk]
+changelog:
+logo: ./logo.jpg
+tags:
+screenshots:

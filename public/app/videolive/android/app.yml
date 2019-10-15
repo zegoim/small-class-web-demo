@@ -1,0 +1,9 @@
+name: videolive
+displayName: Zego VideoLive-视频互动
+description:
+installers:
+ - ./videolive.apk
+changelog:
+logo: ./logo.jpg
+tags:
+screenshots:
