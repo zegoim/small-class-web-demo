@@ -31,7 +31,7 @@ export class LoginCard extends React.Component<LoginCardProps> {
     const { linkUrl, history } = this.props;
     if (this.roomName) {
       if (linkUrl) {
-        history.push(linkUrl);
+        history.push(`${linkUrl}?roomId=${this.roomName}`);
       }
     } else {
       window.setDialog({
@@ -40,6 +40,7 @@ export class LoginCard extends React.Component<LoginCardProps> {
         defaultShow: true,
         showCloseButton: true,
         primaryButtonText: null,
+        secondaryButtonText: null,
       });
     }
   }
