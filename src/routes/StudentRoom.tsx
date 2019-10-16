@@ -1,6 +1,8 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import Icon from "react-uwp/Icon";
+import TextBox from "react-uwp/TextBox";
+import Button from "react-uwp/Button";
 import { SilverRoom } from "../utils/SilverRoom";
 import getSearchQuery from "../utils/getSearchQuery";
 import { liveRoomConfig } from "../utils/liveRoomConfig";
@@ -16,6 +18,8 @@ export interface DataProps {}
 
 export interface StudentRoomState {
   isPlaying?: boolean;
+  studentRooms?: string;
+  currStudentRoomId?: string;
 }
 export interface StudentRoomProps extends DataProps, React.HTMLAttributes<HTMLDivElement> {}
 
@@ -31,22 +35,22 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
   }
 
   joinRoom = async () => {
-    const streamList = await silverRoom.join({ roomId, userId });
+    const streamList = await silverRoom.join({ roomId: this.state.currStudentRoomId, userId });
   }
 
   startConnect = async () => {
-    await silverRoom.playStream({ streamId: `${roomId}-streamId`, viewEl: this.teacherVideoEl });
+    silverRoom.playStream({ streamId: `${roomId}-streamId`, viewEl: this.teacherVideoEl });
     await silverRoom.startPreview(this.videoEl);
     this.setState({
       isPlaying: true
     });
-    await silverRoom.publish(faker.random.uuid());
+    // await silverRoom.publish(faker.random.uuid());
   }
 
   render() {
     const { ...attributes } = this.props;
     const { theme } = this.context;
-    const { isPlaying } = this.state;
+    const { isPlaying, currStudentRoomId } = this.state;
     const styles = getStyles(this);
     const classes = theme.prepareStyles({ styles });
 
@@ -58,47 +62,64 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
             ref={teacherVideoEl => this.teacherVideoEl = teacherVideoEl}
             autoPlay
           />
-        </div>
-        <div {...classes.stVideos} >
-          <div {...classes.stVideo}>
-            <video
-              {...classes.stVideo}
-              autoPlay
-              ref={videoEl => this.videoEl = videoEl}
-            />
-            <div {...classes.videoContent} onClick={this.startConnect}>
-              <Icon size={40} children="PlayLegacy" />
-              <p style={{ marginTop: 24 }}>开始音视频通讯</p>
-            </div>
-          </div>
-          <div {...classes.stVideo}>
-            <video
-              {...classes.stVideo}
-              autoPlay
-            />
-            <div {...classes.videoContentBtm} onClick={this.startConnect}>
-              <Icon size={14} style={{ marginRight: 12 }} children="ContactLegacy" /> 学生1
-            </div>
-          </div>
-          <div {...classes.stVideo}>
-            <video
-              {...classes.stVideo}
-              autoPlay
-            />
-            <div {...classes.videoContentBtm} onClick={this.startConnect}>
-              <Icon size={14} style={{ marginRight: 12 }} children="ContactLegacy" /> 学生2
-            </div>
-          </div>
-          <div {...classes.stVideo}>
-            <video
-              {...classes.stVideo}
-              autoPlay
-            />
-            <div {...classes.videoContentBtm} onClick={this.startConnect}>
-              <Icon size={14} style={{ marginRight: 12 }} children="ContactLegacy" /> 学生3
-            </div>
+          <div {...classes.videoContentBtm} onClick={this.startConnect}>
+            <Icon size={14} style={{ marginRight: 12 }} children="ContactLegacy" /> 教师
           </div>
         </div>
+        {currStudentRoomId ? (
+            <div {...classes.stVideos}>
+              <div {...classes.stVideo}>
+                <video
+                  {...classes.stVideo}
+                  autoPlay
+                  ref={videoEl => this.videoEl = videoEl}
+                />
+                <div {...classes.videoContent} onClick={this.startConnect}>
+                  <Icon size={40} children="PlayLegacy" />
+                  <p style={{ marginTop: 24 }}>开始音视频通讯</p>
+                </div>
+              </div>
+              <div {...classes.stVideo}>
+                <video
+                  {...classes.stVideo}
+                  autoPlay
+                />
+                <div {...classes.videoContentBtm} onClick={this.startConnect}>
+                  <Icon size={14} style={{ marginRight: 12 }} children="ContactLegacy" /> 学生1
+                </div>
+              </div>
+              <div {...classes.stVideo}>
+                <video
+                  {...classes.stVideo}
+                  autoPlay
+                />
+                <div {...classes.videoContentBtm} onClick={this.startConnect}>
+                  <Icon size={14} style={{ marginRight: 12 }} children="ContactLegacy" /> 学生2
+                </div>
+              </div>
+              <div {...classes.stVideo}>
+                <video
+                  {...classes.stVideo}
+                  autoPlay
+                />
+                <div {...classes.videoContentBtm} onClick={this.startConnect}>
+                  <Icon size={14} style={{ marginRight: 12 }} children="ContactLegacy" /> 学生3
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div {...classes.chooseRoom}>
+              <p>选择已有小班：</p>
+              <div>
+                <p>Test</p>
+              </div>
+              <p>创建新小班：</p>
+              <TextBox
+                style={{ width: "100%" }}
+              />
+              <Button style={{ alignSelf: "flex-end" }}>确定</Button>
+            </div>
+          )}
       </div>
     );
   }
@@ -182,6 +203,18 @@ function getStyles(StudentRoom: StudentRoom) {
       width: "100%",
       left: 0,
       bottom: 18
+    }),
+    chooseRoom: prefixStyle({
+      padding: "20px 40px",
+      marginLeft: 20,
+      border: `1px solid ${theme.baseLow}`,
+      width: 600,
+      height: 600,
+      margin: 20,
+      background: theme.acrylicTexture60.background,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-start",
     })
   };
 }
