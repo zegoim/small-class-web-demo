@@ -19,6 +19,16 @@ export default () => (
     <BrowserRouter>
       <Switch>
         <Route
+          path="/TeacherRoom"
+          component={(props: any) => <DynamicLoad {...props}
+          dynamicComponent={import ("./TeacherRoom")} />}
+        />
+        <Route
+          path="/StudentRoom"
+          component={(props: any) => <DynamicLoad {...props}
+          dynamicComponent={import ("./StudentRoom")} />}
+        />
+        <Route
           path="/"
           component={(props: any) => <DynamicLoad {...props}
           dynamicComponent={import ("./Home")} />}

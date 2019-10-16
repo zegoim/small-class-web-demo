@@ -1,11 +1,14 @@
 import * as React from "react";
 import { theme } from "../utils/themeContext";
 import LoginCard from "../components/LoginCard";
+import { RouteComponentProps } from "react-router";
 
-export interface MockProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface HomeProps extends React.HTMLAttributes<HTMLDivElement> {
+  history?: RouteComponentProps["history"];
+}
 
-export function Mock(props: MockProps) {
-  const { ...attributes } = props;
+export function Home(props: HomeProps) {
+  const { history, ...attributes } = props;
   const classes = getStyles(props);
 
   return (
@@ -15,18 +18,20 @@ export function Mock(props: MockProps) {
         description="教师由此进入音视频房间"
         userType="teacher"
         linkUrl="/TeacherRoom"
+        history={history}
       />
       <LoginCard
         title="学生房间"
         description="学生由此进入音视频房间"
         userType="student"
         linkUrl="/StudentRoom"
+        history={history}
       />
     </div>
   );
 }
 
-const getStyles = (props: MockProps) => {
+const getStyles = (props: HomeProps) => {
   return theme.prepareStyles({
     styles: {
       root: theme.prefixStyle({
@@ -47,4 +52,4 @@ const getStyles = (props: MockProps) => {
   });
 }
 
-export default Mock;
+export default Home;

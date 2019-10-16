@@ -4,13 +4,15 @@ import Icon from "react-uwp/Icon";
 import Button from "react-uwp/Button";
 import IconButton from "react-uwp/IconButton";
 import TextBox from "react-uwp/TextBox";
-import { Link } from "react-router-dom";
+import { RouteComponentProps } from "react-router";
 
 export interface DataProps {
   title?: string;
   description?: string;
   linkUrl?: string;
   userType?: "teacher" | "student";
+  onChangeRoom?: (room?: string) => void;
+  history?: RouteComponentProps["history"];
 }
 
 export interface LoginCardProps extends DataProps, React.HTMLAttributes<HTMLDivElement> {}
@@ -18,6 +20,29 @@ export interface LoginCardProps extends DataProps, React.HTMLAttributes<HTMLDivE
 export class LoginCard extends React.Component<LoginCardProps> {
   static contextTypes = { theme: PropTypes.object };
   context: { theme: ReactUWP.ThemeType };
+  roomName: string;
+  handleChangeRoom = (roomName: string) => {
+    const { onChangeRoom } = this.props;
+    this.roomName = roomName;
+    if (onChangeRoom) onChangeRoom(roomName);
+  }
+  
+  enterRoom = () => {
+    const { linkUrl, history } = this.props;
+    if (this.roomName) {
+      if (linkUrl) {
+        history.push(linkUrl);
+      }
+    } else {
+      window.setDialog({
+        statusBarTitle: "提示",
+        content: "请输入房间号！",
+        defaultShow: true,
+        showCloseButton: true,
+        primaryButtonText: null,
+      });
+    }
+  }
 
   render() {
     const {
@@ -25,6 +50,7 @@ export class LoginCard extends React.Component<LoginCardProps> {
       description,
       linkUrl,
       userType,
+      onChangeRoom,
       ...attributes
     } = this.props;
     const { theme } = this.context;
@@ -42,13 +68,19 @@ export class LoginCard extends React.Component<LoginCardProps> {
         </div>
         <div {...classes.columnCenter}>
           <Icon hoverStyle={{ transform: "scale(1.125)" }} style={{ color: theme.accent }} size={120} children={userType === "teacher" ? "ContactLegacy" : "People"} />
-          <TextBox style={{ marginTop: 32, width: "100%" }} placeholder="请输入房间" />
+          <TextBox
+            style={{ marginTop: 32, width: "100%" }}
+            onChangeValue={this.handleChangeRoom}
+            placeholder="请输入房间"
+          />
         </div>
-        <Link style={{ width: "100%" }} to={linkUrl}>
-        <Button style={styles.btn} icon="ChevronFlipRightLegacy">
+        <Button
+          onClick={this.enterRoom}
+          style={styles.btn}
+          icon="ChevronFlipRightLegacy"
+        >
           登录
         </Button>
-        </Link>
       </div>
     );
   }
