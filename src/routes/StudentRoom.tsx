@@ -5,33 +5,61 @@ import TextBox from "react-uwp/TextBox";
 import Button from "react-uwp/Button";
 import { SilverRoom } from "../utils/SilverRoom";
 import getSearchQuery from "../utils/getSearchQuery";
+import { getRoomList } from "../utils/getRoomList";
 import { liveRoomConfig } from "../utils/liveRoomConfig";
+import { RouteComponentProps } from "react-router";
 import * as faker from "faker";
 
 const silverRoom = new SilverRoom();
 silverRoom.initSDK({ appId: liveRoomConfig.appId, signKey: liveRoomConfig.signKey });
 const search = getSearchQuery();
 const userId = faker.random.uuid();
-const roomId: string = search.roomId;
+let roomId: string = search.roomId;
+const currStudentRoomId: string = search.studentRoomId;
+const studentRoomPrefix = "student-";
 
 export interface DataProps {}
 
 export interface StudentRoomState {
   isPlaying?: boolean;
-  studentRooms?: string;
+  studentRooms?: string[];
   currStudentRoomId?: string;
 }
-export interface StudentRoomProps extends DataProps, React.HTMLAttributes<HTMLDivElement> {}
+export interface StudentRoomProps extends DataProps, React.HTMLAttributes<HTMLDivElement> {
+  history?: RouteComponentProps["history"];
+}
 
 export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomState> {
   static contextTypes = { theme: PropTypes.object };
   context: { theme: ReactUWP.ThemeType };
-  state: StudentRoomState = {};
+  state: StudentRoomState = {
+    currStudentRoomId: currStudentRoomId
+  };
   videoEl: HTMLVideoElement;
   teacherVideoEl: HTMLVideoElement;
 
-  componentDidMount() {
-    this.joinRoom();
+  async componentDidMount() {
+    // let data: any = await getRoomList();
+    // let data = {
+    //   code: 0,
+    //   data: {
+    //     room_list: []
+    //   }
+    // };
+    console.log("--------------")
+
+    const search: any = getSearchQuery();
+    roomId = search.roomId;
+
+    const roomList = Array(8 + Math.ceil(Math.random() * 20)).fill(0).map((zero, index) => {
+      const roomId = faker.random.uuid();
+      return { roomId: `${studentRoomPrefix}${roomId}` };
+    });
+    
+    this.setState({
+      currStudentRoomId: search.studentRoomId,
+      studentRooms: roomList.filter(room => room.roomId.includes(studentRoomPrefix)).map(room => room.roomId)
+    });
   }
 
   joinRoom = async () => {
@@ -39,7 +67,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
   }
 
   startConnect = async () => {
-    silverRoom.playStream({ streamId: `${roomId}-streamId`, viewEl: this.teacherVideoEl });
+    this.playTeacherStream();
     await silverRoom.startPreview(this.videoEl);
     this.setState({
       isPlaying: true
@@ -47,10 +75,17 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
     // await silverRoom.publish(faker.random.uuid());
   }
 
+  playTeacherStreamTimer = null;
+  playTeacherStream = () => {
+    const playSuccess = silverRoom.playStream({ streamId: `${roomId}-streamId`, viewEl: this.teacherVideoEl });
+    clearTimeout(this.playTeacherStreamTimer);
+    this.playTeacherStreamTimer = setTimeout(this.playTeacherStream, 1000);
+  }
+
   render() {
-    const { ...attributes } = this.props;
+    const { history, ...attributes } = this.props;
     const { theme } = this.context;
-    const { isPlaying, currStudentRoomId } = this.state;
+    const { isPlaying, studentRooms, currStudentRoomId } = this.state;
     const styles = getStyles(this);
     const classes = theme.prepareStyles({ styles });
 
@@ -110,14 +145,42 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
           ) : (
             <div {...classes.chooseRoom}>
               <p>选择已有小班：</p>
-              <div>
-                <p>Test</p>
+              <div {...classes.stRooms}>
+                {studentRooms && studentRooms.map((roomId, index) => (
+                  <div
+                    {...classes.stRoom}
+                    key={roomId}
+                    onClick={() => {
+                      // eslint-disable-next-line
+                      // history.push(location.pathname + `?roomId=${search.roomId}&studentRoomId=${roomId}`);
+                      // this.setState({ currStudentRoomId: roomId });
+                      // eslint-disable-next-line
+                      location.href = location.pathname + `?roomId=${search.roomId}&studentRoomId=${roomId}`;
+                    }}
+                  >
+                    {roomId.replace(studentRoomPrefix, "")}
+                  </div>
+                ))}
               </div>
               <p>创建新小班：</p>
               <TextBox
-                style={{ width: "100%" }}
+                style={{ width: "100%", margin: "8px 0" }}
+                onChangeValue={currStudentRoomId => this.state.currStudentRoomId = currStudentRoomId}
               />
-              <Button style={{ alignSelf: "flex-end" }}>确定</Button>
+              <Button
+                style={{ alignSelf: "flex-end" }}
+                onClick={() => {
+                  if (this.state.currStudentRoomId) {
+                      // eslint-disable-next-line
+                      // history.push(location.pathname + `?roomId=${search.roomId}&studentRoomId=${this.state.currStudentRoomId}`);
+                      // this.setState({ currStudentRoomId: this.state.currStudentRoomId });
+                      // eslint-disable-next-line
+                      location.href = location.pathname + `?roomId=${search.roomId}&studentRoomId=${this.state.currStudentRoomId}`
+                  }
+                }}
+              >
+                确定
+              </Button>
             </div>
           )}
       </div>
@@ -203,6 +266,31 @@ function getStyles(StudentRoom: StudentRoom) {
       width: "100%",
       left: 0,
       bottom: 18
+    }),
+    stRooms: prefixStyle({
+      display: "flex",
+      flexDirection: "column",
+      width: "100%",
+      height: 360,
+      margin: "18px 0",
+      padding: "4px 0",
+      overflowY: "auto",
+      background: theme.acrylicTexture80.background
+    }),
+    stRoom: prefixStyle({
+      width: "100%",
+      height: 48,
+      flex: "0 0 auto",
+      lineHeight: "48px",
+      margin: "4px 0",
+      padding: "0 8px",
+      cursor: "pointer",
+      color: "#fff",
+      transition: "all .25s 0s ease-in-out",
+      background: theme.acrylicTexture40.background,
+      "&:hover": {
+        background: theme.accent
+      }
     }),
     chooseRoom: prefixStyle({
       padding: "20px 40px",

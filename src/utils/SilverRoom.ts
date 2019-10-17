@@ -201,6 +201,7 @@ export class SilverRoom extends ZegoClient {
     if (!this._cacheSDKConfig.playingStreamIds.includes(stream.streamId)) {
       this._cacheSDKConfig.playingStreamIds.push(stream.streamId);
     }
+    return code;
   }
   /**
    * 播放一组音视频流
