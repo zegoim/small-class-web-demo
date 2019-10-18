@@ -5,6 +5,7 @@ import Button from "react-uwp/Button";
 import IconButton from "react-uwp/IconButton";
 import TextBox from "react-uwp/TextBox";
 import { RouteComponentProps } from "react-router";
+import * as revealEffect from "reveal-effect";
 
 export interface DataProps {
   title?: string;
@@ -21,6 +22,19 @@ export class LoginCard extends React.Component<LoginCardProps> {
   static contextTypes = { theme: PropTypes.object };
   context: { theme: ReactUWP.ThemeType };
   roomName: string;
+  rootEl: HTMLDivElement;
+
+  componentDidMount() {
+    revealEffect.addRevealItem({
+      element: this.rootEl,
+      hoverSize: 400
+    });
+  }
+
+  componentWillUnmount() {
+    revealEffect.clearRevealEl(this.rootEl);
+  }
+  
   handleChangeRoom = (roomName: string) => {
     const { onChangeRoom } = this.props;
     this.roomName = roomName;
@@ -59,7 +73,7 @@ export class LoginCard extends React.Component<LoginCardProps> {
     const classes = theme.prepareStyles({ styles });
 
     return (
-      <div {...attributes} {...classes.root}>
+      <div ref={rootEl => this.rootEl = rootEl} {...attributes} {...classes.root}>
         <div style={{ width: "100%"}}>
           <div {...classes.rowCenter}>
             <p>{title}</p>

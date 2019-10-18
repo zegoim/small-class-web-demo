@@ -3,10 +3,16 @@ import * as React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import DynamicLoad from "../components/DynamicLoad";
 import GlobalDialog from "../components/GlobalDialog";
-
 import { Theme } from "react-uwp/Theme";
 import { theme, ThemeContext } from "../utils/themeContext";
 
+import * as revealEffect from "reveal-effect";
+revealEffect.setRevealConfig({
+  effectEnable: "border",
+  hoverSize: 200,
+  borderWidth: 4,
+  hoverColor: theme.accent
+});
 
 export default () => (
   <ThemeContext.Provider value={theme}>
@@ -25,6 +31,11 @@ export default () => (
         />
         <Route
           path="/StudentRoom"
+          component={(props: any) => <DynamicLoad {...props}
+          dynamicComponent={import ("./StudentRoom")} />}
+        />
+        <Route
+          path="/StudentRoomWithStudent"
           component={(props: any) => <DynamicLoad {...props}
           dynamicComponent={import ("./StudentRoom")} />}
         />

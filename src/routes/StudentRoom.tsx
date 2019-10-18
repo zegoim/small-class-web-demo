@@ -9,6 +9,8 @@ import { getRoomList } from "../utils/getRoomList";
 import { liveRoomConfig } from "../utils/liveRoomConfig";
 import { RouteComponentProps } from "react-router";
 import * as faker from "faker";
+import * as revealEffect from "reveal-effect";
+revealEffect.createCanvas();
 
 const silverRoom = new SilverRoom();
 silverRoom.initSDK({ appId: liveRoomConfig.appId, signKey: liveRoomConfig.signKey });
@@ -23,6 +25,7 @@ export interface DataProps {}
 export interface StudentRoomState {
   isPlaying?: boolean;
   studentRooms?: string[];
+  roomId: string;
   currStudentRoomId?: string;
 }
 export interface StudentRoomProps extends DataProps, React.HTMLAttributes<HTMLDivElement> {
@@ -33,12 +36,15 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
   static contextTypes = { theme: PropTypes.object };
   context: { theme: ReactUWP.ThemeType };
   state: StudentRoomState = {
+    roomId: search.roomId,
     currStudentRoomId: currStudentRoomId
   };
   videoEl: HTMLVideoElement;
   teacherVideoEl: HTMLVideoElement;
+  revealEls: HTMLElement[] = [];
+  remoteStudentVideos: HTMLVideoElement[] = [];
 
-  async componentDidMount() {
+  componentDidMount() {
     // let data: any = await getRoomList();
     // let data = {
     //   code: 0,
@@ -46,10 +52,20 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
     //     room_list: []
     //   }
     // };
-    console.log("--------------")
+    this.addRevealEffect();
+    this.getRooms();
+  }
 
+  getRooms = () => {
     const search: any = getSearchQuery();
     roomId = search.roomId;
+    if (search.studentRoomId) {
+      this.setState({ 
+        roomId: search.roomId,
+        currStudentRoomId: search.studentRoomId
+      });
+      return;
+    }
 
     const roomList = Array(8 + Math.ceil(Math.random() * 20)).fill(0).map((zero, index) => {
       const roomId = faker.random.uuid();
@@ -62,8 +78,30 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
     });
   }
 
+  componentDidUpdate() {
+    this.addRevealEffect();
+  }
+
+  componentWillUnmount() {
+    revealEffect.clearRevealEls();
+  }
+
+  addRevealEffect = () => {
+    revealEffect.clearRevealItems();
+    revealEffect.addRevealEls(this.revealEls);
+  }
+
   joinRoom = async () => {
     const streamList = await silverRoom.join({ roomId: this.state.currStudentRoomId, userId });
+    silverRoom.handleStreamsUpdate = (streamList) => {
+      streamList.slice(0, 3).forEach((stream, index) => {
+        silverRoom.playStream({ streamId: stream.stream_id, viewEl: this.remoteStudentVideos[index] });
+      });
+    };
+
+    streamList.slice(0, 3).forEach((stream, index) => {
+      silverRoom.playStream({ streamId: stream.stream_id, viewEl: this.remoteStudentVideos[index] });
+    });
   }
 
   startConnect = async () => {
@@ -72,7 +110,8 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
     this.setState({
       isPlaying: true
     });
-    // await silverRoom.publish(faker.random.uuid());
+    this.joinRoom();
+    await silverRoom.publish(faker.random.uuid());
   }
 
   playTeacherStreamTimer = null;
@@ -83,6 +122,8 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
   }
 
   render() {
+    this.revealEls = [];
+    this.remoteStudentVideos = [];
     const { history, ...attributes } = this.props;
     const { theme } = this.context;
     const { isPlaying, studentRooms, currStudentRoomId } = this.state;
@@ -90,8 +131,8 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
     const classes = theme.prepareStyles({ styles });
 
     return (
-      <div {...attributes} {...classes.root}>
-        <div {...classes.tcVideo}>
+      <div {...classes.root}>
+        <div {...classes.tcVideo} ref={el => this.revealEls.push(el)}>
           <video
             {...classes.tcVideo}
             ref={teacherVideoEl => this.teacherVideoEl = teacherVideoEl}
@@ -102,7 +143,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
           </div>
         </div>
         {currStudentRoomId ? (
-            <div {...classes.stVideos}>
+            <div {...classes.stVideos} ref={el => this.revealEls.push(el)}>
               <div {...classes.stVideo}>
                 <video
                   {...classes.stVideo}
@@ -118,6 +159,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
                 <video
                   {...classes.stVideo}
                   autoPlay
+                  ref={el => this.remoteStudentVideos[0] = el}
                 />
                 <div {...classes.videoContentBtm} onClick={this.startConnect}>
                   <Icon size={14} style={{ marginRight: 12 }} children="ContactLegacy" /> 学生1
@@ -127,6 +169,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
                 <video
                   {...classes.stVideo}
                   autoPlay
+                  ref={el => this.remoteStudentVideos[1] = el}
                 />
                 <div {...classes.videoContentBtm} onClick={this.startConnect}>
                   <Icon size={14} style={{ marginRight: 12 }} children="ContactLegacy" /> 学生2
@@ -136,6 +179,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
                 <video
                   {...classes.stVideo}
                   autoPlay
+                  ref={el => this.remoteStudentVideos[2] = el}
                 />
                 <div {...classes.videoContentBtm} onClick={this.startConnect}>
                   <Icon size={14} style={{ marginRight: 12 }} children="ContactLegacy" /> 学生3
@@ -143,7 +187,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
               </div>
             </div>
           ) : (
-            <div {...classes.chooseRoom}>
+            <div {...classes.chooseRoom} ref={el => this.revealEls.push(el)}>
               <p>选择已有小班：</p>
               <div {...classes.stRooms}>
                 {studentRooms && studentRooms.map((roomId, index) => (
@@ -151,31 +195,23 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
                     {...classes.stRoom}
                     key={roomId}
                     onClick={() => {
-                      // eslint-disable-next-line
-                      // history.push(location.pathname + `?roomId=${search.roomId}&studentRoomId=${roomId}`);
-                      // this.setState({ currStudentRoomId: roomId });
-                      // eslint-disable-next-line
-                      location.href = location.pathname + `?roomId=${search.roomId}&studentRoomId=${roomId}`;
+                      history.push("/StudentRoomWithStudent" + `?roomId=${search.roomId}&studentRoomId=${roomId}`);
                     }}
                   >
                     {roomId.replace(studentRoomPrefix, "")}
                   </div>
                 ))}
               </div>
-              <p>创建新小班：</p>
+              <p>创建或登录小班房间号：</p>
               <TextBox
                 style={{ width: "100%", margin: "8px 0" }}
-                onChangeValue={currStudentRoomId => this.state.currStudentRoomId = currStudentRoomId}
+                onChangeValue={currStudentRoomId => this.state.currStudentRoomId = `${studentRoomPrefix}${currStudentRoomId}`}
               />
               <Button
                 style={{ alignSelf: "flex-end" }}
                 onClick={() => {
                   if (this.state.currStudentRoomId) {
-                      // eslint-disable-next-line
-                      // history.push(location.pathname + `?roomId=${search.roomId}&studentRoomId=${this.state.currStudentRoomId}`);
-                      // this.setState({ currStudentRoomId: this.state.currStudentRoomId });
-                      // eslint-disable-next-line
-                      location.href = location.pathname + `?roomId=${search.roomId}&studentRoomId=${this.state.currStudentRoomId}`
+                      history.push("/StudentRoomWithStudent" + `?roomId=${search.roomId}&studentRoomId=${this.state.currStudentRoomId}`);
                   }
                 }}
               >
@@ -228,8 +264,9 @@ function getStyles(StudentRoom: StudentRoom) {
       background: theme.acrylicTexture60.background
     }),
     stVideos: prefixStyle({
+      flex: "0 0 auto",
       marginLeft: 20,
-      border: `1px solid ${theme.baseLow}`,
+      // border: `1px solid ${theme.baseLow}`,
       width: 600,
       height: 600,
       margin: 20,
@@ -295,7 +332,7 @@ function getStyles(StudentRoom: StudentRoom) {
     chooseRoom: prefixStyle({
       padding: "20px 40px",
       marginLeft: 20,
-      border: `1px solid ${theme.baseLow}`,
+      // border: `1px solid ${theme.baseLow}`,
       width: 600,
       height: 600,
       margin: 20,
