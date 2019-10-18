@@ -79,6 +79,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
   }
 
   componentDidUpdate() {
+    revealEffect.clearRevealEls();
     this.addRevealEffect();
   }
 
@@ -193,6 +194,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
                 {studentRooms && studentRooms.map((roomId, index) => (
                   <div
                     {...classes.stRoom}
+                    // ref={el => this.revealEls.push(el)}
                     key={roomId}
                     onClick={() => {
                       history.push("/StudentRoomWithStudent" + `?roomId=${search.roomId}&studentRoomId=${roomId}`);
@@ -202,7 +204,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
                   </div>
                 ))}
               </div>
-              <p>创建或登录小班房间号：</p>
+              <p>进入小班：</p>
               <TextBox
                 style={{ width: "100%", margin: "8px 0" }}
                 onChangeValue={currStudentRoomId => this.state.currStudentRoomId = `${studentRoomPrefix}${currStudentRoomId}`}
