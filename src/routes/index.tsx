@@ -13,6 +13,8 @@ revealEffect.setRevealConfig({
   borderWidth: 4,
   hoverColor: theme.accent
 });
+const __DEV__ = location.protocol !== "https:";
+const prefixUrl = __DEV__ ? "/" : "/small-class-web-demo/";
 
 export default () => (
   <ThemeContext.Provider value={theme}>
@@ -25,22 +27,22 @@ export default () => (
     <BrowserRouter>
       <Switch>
         <Route
-          path="/TeacherRoom"
+          path={`${prefixUrl}TeacherRoom`}
           component={(props: any) => <DynamicLoad {...props}
           dynamicComponent={import ("./TeacherRoom")} />}
         />
         <Route
-          path="/StudentRoom"
+          path={`${prefixUrl}StudentRoom`}
           component={(props: any) => <DynamicLoad {...props}
           dynamicComponent={import ("./StudentRoom")} />}
         />
         <Route
-          path="/StudentRoomWithStudent"
+          path={`${prefixUrl}StudentRoomWithStudent`}
           component={(props: any) => <DynamicLoad {...props}
           dynamicComponent={import ("./StudentRoom")} />}
         />
         <Route
-          path="/"
+          path={`${prefixUrl}`}
           component={(props: any) => <DynamicLoad {...props}
           dynamicComponent={import ("./Home")} />}
         />
