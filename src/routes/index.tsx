@@ -13,6 +13,7 @@ revealEffect.setRevealConfig({
   borderWidth: 4,
   hoverColor: theme.accent
 });
+// eslint-disable-next-line
 const __DEV__ = location.protocol !== "https:";
 const prefixUrl = __DEV__ ? "/" : "/small-class-web-demo/";
 
