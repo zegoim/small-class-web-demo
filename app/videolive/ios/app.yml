@@ -1,0 +1,9 @@
+name: videolive
+displayName: Zego VideoLive-视频互动
+description:
+redirectUrl: https://itunes.apple.com/cn/app/videolive-%E8%A7%86%E9%A2%91%E4%BA%92%E5%8A%A8/id1460656181
+installers:
+changelog:
+logo: ./logo.jpg
+tags:
+screenshots:

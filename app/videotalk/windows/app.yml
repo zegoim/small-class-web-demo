@@ -1,0 +1,11 @@
+name: videotalk
+displayName: VideoTalk Windows
+description:
+redirectUrl:
+installers:
+ - ./VideoTalk-ia32-Setup.exe
+ - ./VideoTalk-x64-Setup.exe
+changelog:
+logo: ./logo.png
+tags:
+screenshots:

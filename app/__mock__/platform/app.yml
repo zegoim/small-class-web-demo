@@ -1,0 +1,10 @@
+name: __mock__
+displayName:
+description:
+redirectUrl:
+installers:
+ - ./__mock__.app
+changelog:
+logo: ./logo.png
+tags:
+screenshots:

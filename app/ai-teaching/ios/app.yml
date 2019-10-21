@@ -1,0 +1,9 @@
+name: ai-teaching
+displayName: Zego AI 课堂
+description:
+redirectUrl: https://itunes.apple.com/cn/app/zego-ai%E8%AF%BE%E5%A0%82/id1460651018
+installers: [./ai-teaching.ipa]
+changelog:
+logo: ./logo.jpg
+tags:
+screenshots:

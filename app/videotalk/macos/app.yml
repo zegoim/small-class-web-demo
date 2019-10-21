@@ -1,0 +1,10 @@
+name: videotalk
+displayName: VideoTalk macOS
+description:
+redirectUrl:
+installers:
+ - ./VideoTalk.dmg
+changelog:
+logo: ./logo.png
+tags:
+screenshots:
