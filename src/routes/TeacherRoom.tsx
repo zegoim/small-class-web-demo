@@ -5,6 +5,7 @@ import { SilverRoom } from "../utils/SilverRoom";
 import getSearchQuery from "../utils/getSearchQuery";
 import { liveRoomConfig } from "../utils/liveRoomConfig";
 import * as faker from "faker";
+import * as revealEffect from "reveal-effect";
 
 const silverRoom = new SilverRoom();
 silverRoom.initSDK({ appId: liveRoomConfig.appId, signKey: liveRoomConfig.signKey });
@@ -50,7 +51,7 @@ export class TeacherRoom extends React.Component<TeacherRoomProps, TeacherRoomSt
 
     return (
       <div {...attributes} {...classes.root}>
-        <div {...classes.video} >
+        <div {...classes.video} ref={el => revealEffect.addRevealEl(el)}>
           <video
             {...classes.video}
             autoPlay

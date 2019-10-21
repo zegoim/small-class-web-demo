@@ -5,9 +5,9 @@ import DynamicLoad from "../components/DynamicLoad";
 import GlobalDialog from "../components/GlobalDialog";
 import { Theme } from "react-uwp/Theme";
 import { theme, ThemeContext } from "../utils/themeContext";
-import { __DEV__, prefixUrl } from "../utils/prefixUrl";
-
+import { prefixUrl } from "../utils/prefixUrl";
 import * as revealEffect from "reveal-effect";
+
 revealEffect.setRevealConfig({
   effectEnable: "border",
   hoverSize: 200,

@@ -13,7 +13,6 @@ import * as revealEffect from "reveal-effect";
 import { prefixUrl } from "../utils/prefixUrl";
 
 revealEffect.createCanvas();
-
 const silverRoom = new SilverRoom();
 silverRoom.initSDK({ appId: liveRoomConfig.appId, signKey: liveRoomConfig.signKey });
 const search = getSearchQuery();
@@ -196,7 +195,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
                 {studentRooms && studentRooms.map((roomId, index) => (
                   <div
                     {...classes.stRoom}
-                    // ref={el => this.revealEls.push(el)}
+                    ref={el => this.revealEls.push(el)}
                     key={roomId}
                     onClick={() => {
                       history.push(`${prefixUrl}StudentRoomWithStudent` + `?roomId=${search.roomId}&studentRoomId=${roomId}`);
@@ -311,6 +310,7 @@ function getStyles(StudentRoom: StudentRoom) {
     stRooms: prefixStyle({
       display: "flex",
       flexDirection: "column",
+      pointerEvents: "all",
       width: "100%",
       height: 360,
       margin: "18px 0",
@@ -330,7 +330,7 @@ function getStyles(StudentRoom: StudentRoom) {
       transition: "all .25s 0s ease-in-out",
       background: theme.acrylicTexture40.background,
       "&:hover": {
-        background: theme.accent
+        // background: theme.accent
       }
     }),
     chooseRoom: prefixStyle({
