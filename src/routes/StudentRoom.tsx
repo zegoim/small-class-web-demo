@@ -199,7 +199,6 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
                     // ref={el => this.revealEls.push(el)}
                     key={roomId}
                     onClick={() => {
-                      prefixUrl
                       history.push(`${prefixUrl}StudentRoomWithStudent` + `?roomId=${search.roomId}&studentRoomId=${roomId}`);
                     }}
                   >
