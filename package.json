@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "cross-env HOST=0.0.0.0 react-scripts start",
-    "build": "cross-env PUBLIC_URL=/ react-scripts build",
+    "build": "cross-env PUBLIC_URL=/small-class-web-demo react-scripts build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "publish": "npm run build && node scripts/publish",
