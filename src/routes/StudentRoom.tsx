@@ -10,6 +10,8 @@ import { liveRoomConfig } from "../utils/liveRoomConfig";
 import { RouteComponentProps } from "react-router";
 import * as faker from "faker";
 import * as revealEffect from "reveal-effect";
+import { prefixUrl } from "../utils/prefixUrl";
+
 revealEffect.createCanvas();
 
 const silverRoom = new SilverRoom();
@@ -197,7 +199,8 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
                     // ref={el => this.revealEls.push(el)}
                     key={roomId}
                     onClick={() => {
-                      history.push("/StudentRoomWithStudent" + `?roomId=${search.roomId}&studentRoomId=${roomId}`);
+                      prefixUrl
+                      history.push(`${prefixUrl}StudentRoomWithStudent` + `?roomId=${search.roomId}&studentRoomId=${roomId}`);
                     }}
                   >
                     {roomId.replace(studentRoomPrefix, "")}
@@ -213,7 +216,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
                 style={{ alignSelf: "flex-end" }}
                 onClick={() => {
                   if (this.state.currStudentRoomId) {
-                      history.push("/StudentRoomWithStudent" + `?roomId=${search.roomId}&studentRoomId=${this.state.currStudentRoomId}`);
+                      history.push(`${prefixUrl}StudentRoomWithStudent` + `?roomId=${search.roomId}&studentRoomId=${this.state.currStudentRoomId}`);
                   }
                 }}
               >

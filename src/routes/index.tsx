@@ -5,6 +5,7 @@ import DynamicLoad from "../components/DynamicLoad";
 import GlobalDialog from "../components/GlobalDialog";
 import { Theme } from "react-uwp/Theme";
 import { theme, ThemeContext } from "../utils/themeContext";
+import { __DEV__, prefixUrl } from "../utils/prefixUrl";
 
 import * as revealEffect from "reveal-effect";
 revealEffect.setRevealConfig({
@@ -13,9 +14,6 @@ revealEffect.setRevealConfig({
   borderWidth: 4,
   hoverColor: theme.accent
 });
-// eslint-disable-next-line
-const __DEV__ = location.protocol !== "https:";
-const prefixUrl = __DEV__ ? "/" : "/small-class-web-demo/";
 
 export default () => (
   <ThemeContext.Provider value={theme}>

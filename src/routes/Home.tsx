@@ -2,6 +2,7 @@ import * as React from "react";
 import { theme } from "../utils/themeContext";
 import LoginCard from "../components/LoginCard";
 import { RouteComponentProps } from "react-router";
+import { prefixUrl } from "../utils/prefixUrl";
 
 export interface HomeProps extends React.HTMLAttributes<HTMLDivElement> {
   history?: RouteComponentProps["history"];
@@ -17,14 +18,14 @@ export function Home(props: HomeProps) {
         title="教师房间"
         description="教师由此进入音视频房间"
         userType="teacher"
-        linkUrl="/TeacherRoom"
+        linkUrl={`${prefixUrl}TeacherRoom`}
         history={history}
       />
       <LoginCard
         title="学生房间"
         description="学生由此进入音视频房间"
         userType="student"
-        linkUrl="/StudentRoom"
+        linkUrl={`${prefixUrl}StudentRoom`}
         history={history}
       />
     </div>
