@@ -1,9 +1,0 @@
-name: audiolive
-displayName: Zego AudioLive-语音互动
-description:
-installers:
- - ./audiolive.apk
-changelog:
-logo: ./logo.jpg
-tags:
-screenshots:

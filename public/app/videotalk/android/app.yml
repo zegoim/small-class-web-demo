@@ -1,6 +1,0 @@
-name: video-talk
-displayName: VideoTalk Android
-description: Zego VideoTalk App
-installers:
-- ./videotalk.apk
-logo: ./logo.png

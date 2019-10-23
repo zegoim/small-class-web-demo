@@ -1,6 +1,0 @@
-name: video-talk
-displayName: VideoTalk IOS
-description: Zego VideoTalk App
-installers:
-- ./videotalk.ipa
-logo: ./logo.png

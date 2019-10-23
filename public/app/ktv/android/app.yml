@@ -1,9 +1,0 @@
-name: ktv
-displayName: Zego KTV
-description:
-installers:
- - ./ktv.apk
-changelog:
-logo: ./logo.jpg
-tags:
-screenshots:
