@@ -54,6 +54,7 @@ export class TeacherRoom extends React.Component<TeacherRoomProps, TeacherRoomSt
         <div {...classes.video} ref={el => revealEffect.addRevealEl(el)}>
           <video
             {...classes.video}
+            muted
             autoPlay
             ref={videoEl => this.videoEl = videoEl}
           />

@@ -149,6 +149,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
               <div {...classes.stVideo}>
                 <video
                   {...classes.stVideo}
+                  muted
                   autoPlay
                   ref={videoEl => this.videoEl = videoEl}
                 />
