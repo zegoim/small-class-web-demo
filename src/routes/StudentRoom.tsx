@@ -46,13 +46,6 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
   remoteStudentVideos: HTMLVideoElement[] = [];
 
   componentDidMount() {
-    // let data: any = await getRoomList();
-    // let data = {
-    //   code: 0,
-    //   data: {
-    //     room_list: []
-    //   }
-    // };
     this.addRevealEffect();
     this.getRooms();
   }
@@ -86,6 +79,7 @@ export class StudentRoom extends React.Component<StudentRoomProps, StudentRoomSt
 
   componentWillUnmount() {
     revealEffect.clearRevealEls();
+    silverRoom.leave();
   }
 
   addRevealEffect = () => {

@@ -30,6 +30,10 @@ export class TeacherRoom extends React.Component<TeacherRoomProps, TeacherRoomSt
     this.joinRoom();
   }
 
+  componentWillUnmount() {
+    silverRoom.leave();
+  }
+
   joinRoom = async () => {
     await silverRoom.join({ roomId, userId });
   }

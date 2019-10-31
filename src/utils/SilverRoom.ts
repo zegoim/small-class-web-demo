@@ -117,14 +117,14 @@ export class SilverRoom extends ZegoClient {
   /** 离开房间
    */
   leave = () => {
+    this.stopPublish();
+    this.stopPreview();
     return this.logout();
   }
 
   /** 反初始化 SDK
    */
   unInitSDK = () => {
-    this.stopPublish();
-    this.stopPreview();
     this.leave();
     this._cacheSDKConfig.streamList.forEach((stream, index) => {
       this.stopPlayingStream(stream.stream_id);
